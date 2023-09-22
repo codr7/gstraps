@@ -4,6 +4,6 @@ type ForeignKey struct {
 	BasicConstraint
 }
 
-func (self *ForeignKey) DataType() string {
+func (_ *ForeignKey) ConstraintType() string {
 	return "FOREIGN KEY"
 }

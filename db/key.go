@@ -9,7 +9,7 @@ func (self *Key) Init(table Table, name string, columns ...Column) *Key {
 	return self
 }
 
-func (self *Key) DataType() string {
+func (self *Key) ConstraintType() string {
 	if self == self.table.PrimaryKey() {
 		return "PRIMARY KEY"
 	}
