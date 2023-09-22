@@ -1,17 +1,15 @@
 package db
 
 type Constraint interface {
-	TableDefinition
+	ColumnsDefinition
 	ConstraintType() string
 }
 
 type BasicConstraint struct {
-	BasicTableDefinition
-	columns []Column
+	BasicColumnsDefinition
 }
 
 func (self *BasicConstraint) Init(table Table, name string, columns ...Column) *BasicConstraint {
-	self.BasicTableDefinition.Init(table, name)
-	self.columns = columns
+	self.BasicColumnsDefinition.Init(table, name, columns...)
 	return self
 }

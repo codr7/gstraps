@@ -2,6 +2,9 @@ package db
 
 type Definition interface {
 	Name() string
+	//Exists() (bool, error)
+	//Create() error
+	//Drop() error
 }
 
 type BasicDefinition struct {
