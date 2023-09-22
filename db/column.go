@@ -1,10 +1,10 @@
 package db
 
 type Column interface {
-	Definition
-	Table() Table
+	TableDefinition
+	DataType() string
 }
 
 type BasicColumn struct {
-	BasicDefinition
+	BasicTableDefinition
 }
