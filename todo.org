@@ -1,0 +1,10 @@
+* add generic binary sorted set
+** util
+** gollies
+* add Map based on Set
+** add MapItem struct
+* add db
+** add ideas from metasql
+** add ideas from unid repo
+** add ideas from lisp pg repo
+
