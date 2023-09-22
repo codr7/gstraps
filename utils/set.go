@@ -14,6 +14,22 @@ func (self *Set[K, V]) Init(compare Compare[K, V]) *Set[K, V] {
 	return self
 }
 
+func (self *Set[K, V]) Add(key K, value V) bool {
+	if i, found := self.Index(key); !found {
+		self.Insert(i, value)
+		return true
+	}
+
+	return false
+}
+
+func (self Set[K, V]) Clone() *Set[K, V] {
+	dst := NewSet[K, V](self.compare)
+	dst.items = make([]V, len(self.items))
+	copy(dst.items, self.items)
+	return dst
+}
+
 func (self Set[K, V]) Index(key K) (int, bool) {
 	min, max := 0, len(self.items)
 
@@ -33,40 +49,10 @@ func (self Set[K, V]) Index(key K) (int, bool) {
 	return min, false
 }
 
-func (self Set[K, V]) Member(key K) bool {
-	_, ok := self.Index(key)
-	return ok
-}
-
-func (self Set[K, V]) Clone() *Set[K, V] {
-	dst := NewSet[K, V](self.compare)
-	dst.items = make([]V, len(self.items))
-	copy(dst.items, self.items)
-	return dst
-}
-
 func (self *Set[K, V]) Insert(index int, value V) {
 	self.items = append(self.items, value)
 	copy(self.items[index+1:], self.items[index:])
 	self.items[index] = value
-}
-
-func (self *Set[K, V]) Add(key K, value V) bool {
-	if i, found := self.Index(key); !found {
-		self.Insert(i, value)
-		return true
-	}
-
-	return false
-}
-
-func (self *Set[K, V]) Remove(key K) bool {
-	if i, found := self.Index(key); found {
-		self.items = self.items[:i+copy(self.items[i:], self.items[i+1:])]
-		return true
-	}
-
-	return false
 }
 
 func (self Set[K, V]) Items() []V {
@@ -77,4 +63,18 @@ func (self Set[K, V]) Items() []V {
 
 func (self Set[K, V]) Len() int {
 	return len(self.items)
+}
+
+func (self Set[K, V]) Member(key K) bool {
+	_, ok := self.Index(key)
+	return ok
+}
+
+func (self *Set[K, V]) Remove(key K) bool {
+	if i, found := self.Index(key); found {
+		self.items = self.items[:i+copy(self.items[i:], self.items[i+1:])]
+		return true
+	}
+
+	return false
 }

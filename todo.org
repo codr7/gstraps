@@ -1,7 +1,4 @@
-* add Map based on Set
-** add MapItem struct
 * db
-** add db.Record based on Map
 ** add pg lib
 ** metasql
 ** unid

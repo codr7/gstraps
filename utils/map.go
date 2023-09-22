@@ -21,14 +21,6 @@ func (self *Map[K, V]) Init(compare Compare[K, K]) *Map[K, V] {
 	return self
 }
 
-func (self *Map[K, V]) Upsert(key K, value V) {
-	if i, ok := self.Index(key); ok {
-		self.items[i].value = value
-	} else {
-		self.Insert(i, MapItem[K, V]{key, value})
-	}
-}
-
 func (self *Map[K, V]) Find(key K) (V, bool) {
 	if i, ok := self.Index(key); ok {
 		return self.items[i].value, true
@@ -36,4 +28,12 @@ func (self *Map[K, V]) Find(key K) (V, bool) {
 
 	var v V
 	return v, false
+}
+
+func (self *Map[K, V]) Upsert(key K, value V) {
+	if i, ok := self.Index(key); ok {
+		self.items[i].value = value
+	} else {
+		self.Insert(i, MapItem[K, V]{key, value})
+	}
 }
