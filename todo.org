@@ -1,6 +1,3 @@
-* add generic binary sorted set
-** util
-** gollies
 * add Map based on Set
 ** add MapItem struct
 * add db
