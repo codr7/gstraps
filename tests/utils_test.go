@@ -27,17 +27,25 @@ func TestUtilsMap(t *testing.T) {
 	if l := m.Len(); l != 2 {
 		t.Fatalf("Wrong length: %v", l)
 	}
+
+	if v, ok := m.Find(2); !ok || v != "two" {
+		t.Fatalf("Wrong value: %v", v)
+	}
+
+	if v, ok := m.Find(4); !ok || v != "four" {
+		t.Fatalf("Wrong value: %v", v)
+	}
 }
 
 func TestUtilsSet(t *testing.T) {
-	var s utils.Set[int]
+	var s utils.Set[int, int]
 	s.Init(utils.CompareInt)
 
-	s.Add(5)
-	s.Add(2)
-	s.Add(4)
-	s.Add(1)
-	s.Add(3)
+	s.Add(5, 5)
+	s.Add(2, 2)
+	s.Add(4, 4)
+	s.Add(1, 1)
+	s.Add(3, 3)
 
 	if l := s.Len(); l != 5 {
 		t.Fatalf("Wrong length: %v", l)

@@ -12,7 +12,7 @@ const (
 	Gt = Order(1)
 )
 
-type Compare[T any] func(l, r T) Order
+type Compare[L, R any] func(l L, r R) Order
 
 func CompareInt(l, r int) Order {
 	if l < r {

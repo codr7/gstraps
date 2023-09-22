@@ -1,26 +1,26 @@
 package utils
 
-type Set[T any] struct {
-	compare Compare[T]
-	items   []T
+type Set[K, V any] struct {
+	compare Compare[K, V]
+	items   []V
 }
 
-func NewSet[T any](compare Compare[T]) *Set[T] {
-	return new(Set[T]).Init(compare)
+func NewSet[K, V any](compare Compare[K, V]) *Set[K, V] {
+	return new(Set[K, V]).Init(compare)
 }
 
-func (self *Set[T]) Init(compare Compare[T]) *Set[T] {
+func (self *Set[K, V]) Init(compare Compare[K, V]) *Set[K, V] {
 	self.compare = compare
 	return self
 }
 
-func (self Set[T]) Index(value T) (int, bool) {
+func (self Set[K, V]) Index(key K) (int, bool) {
 	min, max := 0, len(self.items)
 
 	for min < max {
 		i := (min + max) / 2
 
-		switch self.compare(value, self.items[i]) {
+		switch self.compare(key, self.items[i]) {
 		case Lt:
 			max = i
 		case Eq:
@@ -33,26 +33,26 @@ func (self Set[T]) Index(value T) (int, bool) {
 	return min, false
 }
 
-func (self Set[T]) Exists(value T) bool {
-	_, ok := self.Index(value)
+func (self Set[K, V]) Member(key K) bool {
+	_, ok := self.Index(key)
 	return ok
 }
 
-func (self Set[T]) Clone() *Set[T] {
-	dst := NewSet[T](self.compare)
-	dst.items = make([]T, len(self.items))
+func (self Set[K, V]) Clone() *Set[K, V] {
+	dst := NewSet[K, V](self.compare)
+	dst.items = make([]V, len(self.items))
 	copy(dst.items, self.items)
 	return dst
 }
 
-func (self *Set[T]) Insert(index int, value T) {
+func (self *Set[K, V]) Insert(index int, value V) {
 	self.items = append(self.items, value)
 	copy(self.items[index+1:], self.items[index:])
 	self.items[index] = value
 }
 
-func (self *Set[T]) Add(value T) bool {
-	if i, exists := self.Index(value); !exists {
+func (self *Set[K, V]) Add(key K, value V) bool {
+	if i, found := self.Index(key); !found {
 		self.Insert(i, value)
 		return true
 	}
@@ -60,8 +60,8 @@ func (self *Set[T]) Add(value T) bool {
 	return false
 }
 
-func (self *Set[T]) Remove(value T) bool {
-	if i, exists := self.Index(value); exists {
+func (self *Set[K, V]) Remove(key K) bool {
+	if i, found := self.Index(key); found {
 		self.items = self.items[:i+copy(self.items[i:], self.items[i+1:])]
 		return true
 	}
@@ -69,12 +69,12 @@ func (self *Set[T]) Remove(value T) bool {
 	return false
 }
 
-func (self Set[T]) Items() []T {
-	out := make([]T, len(self.items))
+func (self Set[K, V]) Items() []V {
+	out := make([]V, len(self.items))
 	copy(out, self.items)
 	return out
 }
 
-func (self Set[T]) Len() int {
+func (self Set[K, V]) Len() int {
 	return len(self.items)
 }
