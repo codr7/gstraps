@@ -45,11 +45,15 @@ func (self Set[T]) Clone() *Set[T] {
 	return dst
 }
 
+func (self *Set[T]) Insert(index int, value T) {
+	self.items = append(self.items, value)
+	copy(self.items[index+1:], self.items[index:])
+	self.items[index] = value
+}
+
 func (self *Set[T]) Add(value T) bool {
 	if i, exists := self.Index(value); !exists {
-		self.items = append(self.items, value)
-		copy(self.items[i+1:], self.items[i:])
-		self.items[i] = value
+		self.Insert(i, value)
 		return true
 	}
 

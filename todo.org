@@ -1,7 +1,9 @@
 * add Map based on Set
 ** add MapItem struct
-* add db
-** add ideas from metasql
-** add ideas from unid repo
-** add ideas from lisp pg repo
+* db
+** add db.Record based on Map
+** add pg lib
+** metasql
+** unid
+** cl-redb
 
