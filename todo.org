@@ -1,5 +1,11 @@
 * db
-** implement Definition.Create/Drop/Exists
+** implenent Create/Drop for Column
+*** create columns in Table.Create
+** implement Create/Drop for Key
+*** create primaryKey in Table.Create
+** implement Create/Drop for ForeignKey
+** implement Create/Drop for Index
+** implement Definition.Exists
 ** metasql
 ** unid
 ** cl-redb

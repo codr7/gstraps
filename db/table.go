@@ -1,7 +1,9 @@
 package db
 
 import (
+	"fmt"
 	"log"
+	"strings"
 )
 
 type Table interface {
@@ -23,6 +25,18 @@ func NewTable(name string) *BasicTable {
 func (self *BasicTable) Init(name string) *BasicTable {
 	self.BasicDefinition.Init(name)
 	return self
+}
+
+func (self *BasicTable) Create(tx *Transaction) error {
+	var sql strings.Builder
+	fmt.Fprintf(&sql, "CREATE TABLE %v ()", self.SQLName())
+	return tx.ExecSQL(sql.String())
+}
+
+func (self *BasicTable) Drop(tx *Transaction) error {
+	var sql strings.Builder
+	fmt.Fprintf(&sql, "DROP TABLE %v", self.SQLName())
+	return tx.ExecSQL(sql.String())
 }
 
 func (self *BasicTable) PrimaryKey() *Key {

@@ -7,9 +7,9 @@ import (
 )
 
 func TestDBRecord(t *testing.T) {
-	tbl := db.NewTable("TestRecordTable")
+	tbl := db.NewTable("TestRecord")
 	col := db.NewIntegerColumn(tbl, "TestRecordColumn")
-	key := db.NewKey(tbl, "TestDbRecordPrimaryKey", col)
+	key := db.NewKey(tbl, "TestRecordPrimaryKey", col)
 	tbl.SetPrimaryKey(key)
 	rec := db.NewRecord()
 
@@ -30,6 +30,37 @@ func TestDBRecord(t *testing.T) {
 	c, err := db.DefaultConnectOptions().NewConnection()
 
 	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err = c.Close(); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func TestDBTable(t *testing.T) {
+	tbl := db.NewTable("TestTable")
+	col := db.NewIntegerColumn(tbl, "TestTableColumn")
+	key := db.NewKey(tbl, "TestTablePrimaryKey", col)
+	tbl.SetPrimaryKey(key)
+
+	c, err := db.DefaultConnectOptions().NewConnection()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tx, err := c.StartTransaction()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := tbl.Create(tx); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := tbl.Drop(tx); err != nil {
 		t.Fatal(err)
 	}
 

@@ -29,6 +29,16 @@ func (self *Connection) Init(cx context.Context, url string) (*Connection, error
 	return self, nil
 }
 
+func (self *Connection) StartTransaction() (*Transaction, error) {
+	imp, err := self.imp.Begin(self.cx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return new(Transaction).Init(self.cx, imp), nil
+}
+
 func (self *Connection) Close() error {
 	return self.imp.Close(self.cx)
 }

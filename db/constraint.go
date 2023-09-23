@@ -13,3 +13,11 @@ func (self *BasicConstraint) Init(table Table, name string, columns ...Column) *
 	self.BasicColumnsDefinition.Init(table, name, columns...)
 	return self
 }
+
+func (self *BasicConstraint) Create(tx *Transaction) error {
+	return nil
+}
+
+func (self *BasicConstraint) Drop(tx *Transaction) error {
+	return nil
+}

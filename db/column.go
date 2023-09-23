@@ -8,3 +8,11 @@ type Column interface {
 type BasicColumn struct {
 	BasicTableDefinition
 }
+
+func (self *BasicColumn) Create(tx *Transaction) error {
+	return nil
+}
+
+func (self *BasicColumn) Drop(tx *Transaction) error {
+	return nil
+}
