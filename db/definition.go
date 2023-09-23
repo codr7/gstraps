@@ -5,11 +5,14 @@ import (
 )
 
 type Definition interface {
+	DefinitionType() string
 	Name() string
-	SQLName() string
 	//Exists() (bool, error)
 	Create(tx *Transaction) error
+	CreateSQL() string
 	Drop(tx *Transaction) error
+	DropSQL() string
+	SQLName() string
 }
 
 type BasicDefinition struct {
@@ -21,10 +24,18 @@ func (self *BasicDefinition) Init(name string) *BasicDefinition {
 	return self
 }
 
-func (self *BasicDefinition) Name() string {
+func (self BasicDefinition) Name() string {
 	return self.name
 }
 
-func (self *BasicDefinition) SQLName() string {
+func (self BasicDefinition) SQLName() string {
 	return fmt.Sprintf("\"%v\"", self.name)
+}
+
+func DefinitionCreateSQL(def Definition) string {
+	return fmt.Sprintf("CREATE %v %v", def.DefinitionType(), def.SQLName())
+}
+
+func DefinitionDropSQL(def Definition) string {
+	return fmt.Sprintf("DROP %v %v", def.DefinitionType(), def.SQLName())
 }

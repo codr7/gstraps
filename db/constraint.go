@@ -1,5 +1,9 @@
 package db
 
+import (
+	"fmt"
+)
+
 type Constraint interface {
 	ColumnsDefinition
 	ConstraintType() string
@@ -14,10 +18,14 @@ func (self *BasicConstraint) Init(table Table, name string, columns ...Column) *
 	return self
 }
 
-func (self *BasicConstraint) Create(tx *Transaction) error {
-	return nil
+func (self *BasicConstraint) DefinitionType() string {
+	return "CONSTRAINT"
 }
 
-func (self *BasicConstraint) Drop(tx *Transaction) error {
-	return nil
+func ConstraintCreateSQL(ctr Constraint) string {
+	return fmt.Sprintf("%v %v (%v)", TableDefinitionCreateSQL(ctr), ctr.ConstraintType(), ColumnsSQL(ctr.Columns()...))
+}
+
+func ConstraintDropSQL(ctr Constraint) string {
+	return TableDefinitionDropSQL(ctr)
 }

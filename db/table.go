@@ -3,11 +3,11 @@ package db
 import (
 	"fmt"
 	"log"
-	"strings"
 )
 
 type Table interface {
 	Definition
+	AddColumn(Column)
 	PrimaryKey() *Key
 	SetPrimaryKey(*Key)
 }
@@ -27,19 +27,47 @@ func (self *BasicTable) Init(name string) *BasicTable {
 	return self
 }
 
-func (self *BasicTable) Create(tx *Transaction) error {
-	var sql strings.Builder
-	fmt.Fprintf(&sql, "CREATE TABLE %v ()", self.SQLName())
-	return tx.ExecSQL(sql.String())
+func (self *BasicTable) AddColumn(column Column) {
+	self.columns = append(self.columns, column)
 }
 
-func (self *BasicTable) Drop(tx *Transaction) error {
-	var sql strings.Builder
-	fmt.Fprintf(&sql, "DROP TABLE %v", self.SQLName())
-	return tx.ExecSQL(sql.String())
+func (self BasicTable) Create(tx *Transaction) error {
+	if err := tx.ExecSQL(self.CreateSQL()); err != nil {
+		return err
+	}
+
+	for _, c := range self.columns {
+		if err := c.Create(tx); err != nil {
+			return err
+		}
+	}
+
+	if self.primaryKey != nil {
+		if err := self.primaryKey.Create(tx); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
-func (self *BasicTable) PrimaryKey() *Key {
+func (self BasicTable) CreateSQL() string {
+	return fmt.Sprintf("%v ()", DefinitionCreateSQL(&self))
+}
+
+func (self BasicTable) DefinitionType() string {
+	return "TABLE"
+}
+
+func (self BasicTable) Drop(tx *Transaction) error {
+	return tx.ExecSQL(self.DropSQL())
+}
+
+func (self BasicTable) DropSQL() string {
+	return DefinitionDropSQL(self)
+}
+
+func (self BasicTable) PrimaryKey() *Key {
 	return self.primaryKey
 }
 

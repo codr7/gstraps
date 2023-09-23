@@ -13,8 +13,24 @@ func (self *TextColumn) Init(table Table, name string) *TextColumn {
 	return self
 }
 
-func (_ TextColumn) DataType() string {
+func (_ TextColumn) ColumnType() string {
 	return "TEXT"
+}
+
+func (self *TextColumn) Create(tx *Transaction) error {
+	return tx.ExecSQL(self.CreateSQL())
+}
+
+func (self *TextColumn) CreateSQL() string {
+	return ColumnCreateSQL(self)
+}
+
+func (self *TextColumn) Drop(tx *Transaction) error {
+	return tx.ExecSQL(self.DropSQL())
+}
+
+func (self *TextColumn) DropSQL() string {
+	return ColumnDropSQL(self)
 }
 
 func (self *TextColumn) Get(record Record) string {

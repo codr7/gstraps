@@ -15,3 +15,7 @@ func (self *BasicColumnsDefinition) Init(table Table, name string, columns ...Co
 	self.columns = columns
 	return self
 }
+
+func (self *BasicColumnsDefinition) Columns() []Column {
+	return self.columns
+}
