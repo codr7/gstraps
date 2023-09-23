@@ -5,7 +5,12 @@ import (
 )
 
 type Record struct {
-	fields utils.Map[Column, any]
+	fields utils.Set[Column, *Field]
+}
+
+type Field struct {
+	column Column
+	value  any
 }
 
 func NewRecord() *Record {
@@ -13,20 +18,20 @@ func NewRecord() *Record {
 }
 
 func (self *Record) Init() *Record {
-	self.fields.Init(func(l, r Column) int {
-		if c := utils.CompareString(l.Table().Name(), r.Table().Name()); c != 0 {
+	self.fields.Init(func(l Column, r *Field) int {
+		if c := utils.CompareString(l.Table().Name(), r.column.Table().Name()); c != 0 {
 			return c
 		}
 
-		return utils.CompareString(l.Name(), r.Name())
+		return utils.CompareString(l.Name(), r.column.Name())
 	})
 
 	return self
 }
 
 func (self Record) Get(column Column) any {
-	if v, ok := self.fields.Find(column); ok {
-		return v
+	if f, ok := self.fields.Find(column); ok {
+		return f.value
 	}
 
 	return nil
@@ -37,5 +42,9 @@ func (self Record) Null(column Column) bool {
 }
 
 func (self *Record) Set(column Column, value any) {
-	self.fields.Upsert(column, value)
+	if i, ok := self.fields.Index(column); ok {
+		self.fields.Get(i).value = value
+	} else {
+		self.fields.Insert(i, &Field{column, value})
+	}
 }

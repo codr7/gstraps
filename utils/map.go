@@ -22,8 +22,8 @@ func (self *Map[K, V]) Init(compare Compare[K, K]) *Map[K, V] {
 }
 
 func (self Map[K, V]) Find(key K) (V, bool) {
-	if i, ok := self.Index(key); ok {
-		return self.items[i].value, true
+	if it, ok := self.Set.Find(key); ok {
+		return it.value, true
 	}
 
 	var v V

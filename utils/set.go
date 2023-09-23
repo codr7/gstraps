@@ -30,6 +30,19 @@ func (self Set[K, V]) Clone() *Set[K, V] {
 	return dst
 }
 
+func (self Set[K, V]) Find(key K) (V, bool) {
+	if i, ok := self.Index(key); ok {
+		return self.items[i], true
+	}
+
+	var v V
+	return v, false
+}
+
+func (self Set[K, V]) Get(index int) V {
+	return self.items[index]
+}
+
 func (self Set[K, V]) Index(key K) (int, bool) {
 	min, max := 0, len(self.items)
 
