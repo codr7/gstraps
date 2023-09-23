@@ -1,5 +1,5 @@
 * db
-** add transaction change tracking
+** finish transaction change tracking
 ** add Create/Drop for ForeignKey
 ** add Create/Drop for Index
 ** add Definition.Exists

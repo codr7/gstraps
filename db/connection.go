@@ -11,8 +11,10 @@ import (
 type Connection struct {
 	cx           context.Context
 	imp          *pgx.Conn
-	storedFields map[*Field]any
+	storedFields StoredFields
 }
+
+type StoredFields = map[*Field]any
 
 func Connect(cx context.Context, url string) (*Connection, error) {
 	return new(Connection).Init(cx, url)
@@ -27,6 +29,7 @@ func (self *Connection) Init(cx context.Context, url string) (*Connection, error
 
 	pgxdecimal.Register(self.imp.TypeMap())
 	self.cx = cx
+	self.storedFields = make(StoredFields)
 	return self, nil
 }
 
@@ -37,7 +40,7 @@ func (self *Connection) StartTransaction() (*Transaction, error) {
 		return nil, err
 	}
 
-	return new(Transaction).Init(self.cx, imp), nil
+	return new(Transaction).Init(self, imp), nil
 }
 
 func (self *Connection) Close() error {

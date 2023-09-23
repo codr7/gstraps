@@ -115,6 +115,10 @@ func TestDBTransactions(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	if err = tx1.Commit(); err == nil {
+		t.Fatal("Commit of rolled back transaction")
+	}
+
 	if err = c.Close(); err != nil {
 		t.Fatal(err)
 	}
