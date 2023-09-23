@@ -8,6 +8,10 @@ type Record struct {
 	fields utils.Map[Column, any]
 }
 
+func NewRecord() *Record {
+	return new(Record).Init()
+}
+
 func (self *Record) Init() *Record {
 	self.fields.Init(func(l, r Column) int {
 		if c := utils.CompareString(l.Table().Name(), r.Table().Name()); c != 0 {
@@ -26,6 +30,10 @@ func (self Record) Get(column Column) any {
 	}
 
 	return nil
+}
+
+func (self Record) Null(column Column) bool {
+	return !self.fields.Member(column)
 }
 
 func (self *Record) Set(column Column, value any) {

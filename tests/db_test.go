@@ -6,22 +6,34 @@ import (
 	"github.com/codr7/gstraps/db"
 )
 
-func TestDbRecord(t *testing.T) {
-	var tbl db.BasicTable
-	tbl.Init("TestDbRecord")
+func TestDBRecord(t *testing.T) {
+	tbl := db.NewTable("TestRecordTable")
+	col := db.NewIntegerColumn(tbl, "TestRecordColumn")
+	key := db.NewKey(tbl, "TestDbRecordPrimaryKey", col)
+	tbl.SetPrimaryKey(key)
+	rec := db.NewRecord()
 
-	var col db.IntegerColumn
-	col.Init(&tbl, "TestDbRecordColumn")
+	if ok := rec.Null(col); !ok {
+		t.Fatalf("Should be null")
+	}
 
-	var key db.Key
-	key.Init(&tbl, "TestDbRecordPrimaryKey", &col)
-	tbl.SetPrimaryKey(&key)
+	col.Set(rec, 42)
 
-	var rec db.Record
-	rec.Init()
-	col.Set(&rec, 42)
+	if ok := rec.Null(col); ok {
+		t.Fatalf("Shouldn't be null")
+	}
 
-	if v := col.Get(rec); v != 42 {
+	if v := col.Get(*rec); v != 42 {
 		t.Fatalf("Wrong value: %v", v)
+	}
+
+	c, err := db.DefaultConnectOptions().NewConnection()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err = c.Close(); err != nil {
+		t.Fatal(err)
 	}
 }

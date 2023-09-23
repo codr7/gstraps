@@ -1,6 +1,7 @@
 * db
-** add pg lib
+** implement Definition.Create/Drop/Exists
 ** metasql
 ** unid
 ** cl-redb
 
+su -u postgres psql

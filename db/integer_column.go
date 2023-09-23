@@ -4,8 +4,13 @@ type IntegerColumn struct {
 	BasicColumn
 }
 
-func (self *IntegerColumn) Columns() []Column {
-	return []Column{self}
+func NewIntegerColumn(table Table, name string) *IntegerColumn {
+	return new(IntegerColumn).Init(table, name)
+}
+
+func (self *IntegerColumn) Init(table Table, name string) *IntegerColumn {
+	self.BasicColumn.Init(table, name)
+	return self
 }
 
 func (_ IntegerColumn) DataType() string {

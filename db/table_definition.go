@@ -2,7 +2,6 @@ package db
 
 type TableDefinition interface {
 	Definition
-	Columns() []Column
 	Table() Table
 }
 

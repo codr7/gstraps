@@ -4,8 +4,13 @@ type TextColumn struct {
 	BasicColumn
 }
 
-func (self *TextColumn) Columns() []Column {
-	return []Column{self}
+func NewTextColumn(table Table, name string) *TextColumn {
+	return new(TextColumn).Init(table, name)
+}
+
+func (self *TextColumn) Init(table Table, name string) *TextColumn {
+	self.BasicColumn.Init(table, name)
+	return self
 }
 
 func (_ TextColumn) DataType() string {
