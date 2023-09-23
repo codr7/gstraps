@@ -1,7 +1,13 @@
 * db
-** implement Create/Drop for ForeignKey
-** implement Create/Drop for Index
-** implement Definition.Exists
+** add transaction change tracking
+** add Create/Drop for ForeignKey
+** add Create/Drop for Index
+** add Definition.Exists
+** add Conditions
+** add Table.Insert
+** add Table.Update
+** add Table.Delete
+** add Enums
 ** metasql
 ** unid
 ** cl-redb

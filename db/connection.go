@@ -9,8 +9,9 @@ import (
 )
 
 type Connection struct {
-	cx  context.Context
-	imp *pgx.Conn
+	cx           context.Context
+	imp          *pgx.Conn
+	storedFields map[*Field]any
 }
 
 func Connect(cx context.Context, url string) (*Connection, error) {
