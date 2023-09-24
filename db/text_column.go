@@ -10,6 +10,7 @@ func NewTextColumn(table Table, name string) *TextColumn {
 
 func (self *TextColumn) Init(table Table, name string) *TextColumn {
 	self.BasicColumn.Init(table, name)
+	table.AddColumn(self)
 	return self
 }
 

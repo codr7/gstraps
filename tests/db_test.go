@@ -65,16 +65,16 @@ func TestDBRecord(t *testing.T) {
 
 func TestDBTable(t *testing.T) {
 	tbl1 := db.NewTable("TestTable1")
-	col1 := db.NewIntegerColumn(tbl1, "TestTableColumn1")
-	db.NewIndex(tbl1, "TestTableIndex", col1).Unique = true
-	key1 := db.NewKey(tbl1, "TestTablePrimaryKey1", col1)
-	tbl1.SetPrimaryKey(key1)
+	tbl1_integer := db.NewIntegerColumn(tbl1, "TestTable1Integer")
+	db.NewTextColumn(tbl1, "TestTable1Text")
+	db.NewIndex(tbl1, "TestTableIndex", tbl1_integer).Unique = true
+	tbl1_primary := db.NewKey(tbl1, "TestTable1Primary", tbl1_integer)
+	tbl1.SetPrimaryKey(tbl1_primary)
 
 	tbl2 := db.NewTable("TestTable2")
-	col2 := db.NewIntegerColumn(tbl2, "TestTableColumn2")
-	key2 := db.NewKey(tbl2, "TestTablePrimaryKey2", col2)
-	tbl2.SetPrimaryKey(key2)
-	db.NewForeignKey(tbl2, "TestTableForegnKey", tbl1, col1)
+	tbl2_foreign := db.NewForeignKey(tbl2, "TestTable2Foregn", tbl1, tbl1_integer)
+	tbl2_primary := db.NewKey(tbl2, "TestTable2Primary", tbl2_foreign.Columns()[0])
+	tbl2.SetPrimaryKey(tbl2_primary)
 
 	c, err := db.DefaultCxOptions().NewCx()
 
@@ -113,7 +113,7 @@ func TestDBTable(t *testing.T) {
 	}
 }
 
-func TestDBTxs(t *testing.T) {
+func TestDBTx(t *testing.T) {
 	c, err := db.DefaultCxOptions().NewCx()
 
 	if err != nil {
