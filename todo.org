@@ -1,13 +1,12 @@
 * db
+** add column Null option
 ** add Table.Insert
 ** add Cond
 ** add Table.Update
 ** add Table.Delete
 ** add Exists for all definitions
-** add Seq
-** add Enums
-** metasql
-** unid
+** add Sequence
+** add Enum
 ** cl-redb
 * slog
 ** tag based
