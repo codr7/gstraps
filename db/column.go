@@ -7,6 +7,7 @@ import (
 
 type Column interface {
 	TableDefinition
+	Clone(table Table, name string) Column
 	ColumnType() string
 }
 

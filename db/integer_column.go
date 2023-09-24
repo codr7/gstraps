@@ -14,6 +14,10 @@ func (self *IntegerColumn) Init(table Table, name string) *IntegerColumn {
 	return self
 }
 
+func (self IntegerColumn) Clone(table Table, name string) Column {
+	return NewIntegerColumn(table, name)
+}
+
 func (_ IntegerColumn) ColumnType() string {
 	return "INTEGER"
 }

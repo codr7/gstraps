@@ -64,10 +64,16 @@ func TestDBRecord(t *testing.T) {
 }
 
 func TestDBTable(t *testing.T) {
-	tbl := db.NewTable("TestTable")
-	col := db.NewIntegerColumn(tbl, "TestTableColumn")
-	key := db.NewKey(tbl, "TestTablePrimaryKey", col)
-	tbl.SetPrimaryKey(key)
+	tbl1 := db.NewTable("TestTable1")
+	col1 := db.NewIntegerColumn(tbl1, "TestTableColumn1")
+	key1 := db.NewKey(tbl1, "TestTablePrimaryKey1", col1)
+	tbl1.SetPrimaryKey(key1)
+
+	tbl2 := db.NewTable("TestTable2")
+	col2 := db.NewIntegerColumn(tbl2, "TestTableColumn2")
+	key2 := db.NewKey(tbl2, "TestTablePrimaryKey2", col2)
+	tbl2.SetPrimaryKey(key2)
+	db.NewForeignKey(tbl2, "TestTableForegnKey", tbl1, col1)
 
 	c, err := db.DefaultCxOptions().NewCx()
 
@@ -81,11 +87,19 @@ func TestDBTable(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := tbl.Create(tx); err != nil {
+	if err := tbl1.Create(tx); err != nil {
 		t.Fatal(err)
 	}
 
-	if err := tbl.Drop(tx); err != nil {
+	if err := tbl2.Create(tx); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := tbl1.Drop(tx); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := tbl2.Drop(tx); err != nil {
 		t.Fatal(err)
 	}
 

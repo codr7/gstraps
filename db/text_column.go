@@ -13,6 +13,10 @@ func (self *TextColumn) Init(table Table, name string) *TextColumn {
 	return self
 }
 
+func (self TextColumn) Clone(table Table, name string) Column {
+	return NewTextColumn(table, name)
+}
+
 func (_ TextColumn) ColumnType() string {
 	return "TEXT"
 }

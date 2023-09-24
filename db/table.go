@@ -8,14 +8,18 @@ import (
 type Table interface {
 	Definition
 	AddColumn(Column)
+	AddDefinition(Definition)
+	AddForeignKey(*ForeignKey)
 	PrimaryKey() *Key
 	SetPrimaryKey(*Key)
 }
 
 type BasicTable struct {
 	BasicDefinition
-	columns    []Column
-	primaryKey *Key
+	columns     []Column
+	definitions []Definition
+	foreignKeys []*ForeignKey
+	primaryKey  *Key
 }
 
 func NewTable(name string) *BasicTable {
@@ -29,6 +33,16 @@ func (self *BasicTable) Init(name string) *BasicTable {
 
 func (self *BasicTable) AddColumn(column Column) {
 	self.columns = append(self.columns, column)
+	self.AddDefinition(column)
+}
+
+func (self *BasicTable) AddDefinition(definition Definition) {
+	self.definitions = append(self.definitions, definition)
+}
+
+func (self *BasicTable) AddForeignKey(key *ForeignKey) {
+	self.foreignKeys = append(self.foreignKeys, key)
+	self.AddDefinition(key)
 }
 
 func (self BasicTable) Create(tx *Tx) error {

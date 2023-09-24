@@ -1,12 +1,13 @@
 * db
-** finish transaction change tracking
-** add Create/Drop for ForeignKey
 ** add Create/Drop for Index
-** add Definition.Exists
-** add Conditions
+*** add unique
+**** options?
 ** add Table.Insert
+** add Cond
 ** add Table.Update
 ** add Table.Delete
+** add Exists for all definitions
+** add Seq
 ** add Enums
 ** metasql
 ** unid
