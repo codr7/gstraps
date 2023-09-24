@@ -11,7 +11,7 @@
 * slog
 ** tag based
 * error
-** metaerr
 ** stack trace
+* script
 
 su -u postgres psql
