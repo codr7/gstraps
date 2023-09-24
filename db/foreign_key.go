@@ -4,10 +4,19 @@ import (
 	"fmt"
 )
 
+type ForeignKeyAction string
+
+const (
+	CASCADE  ForeignKeyAction = "CASCADE"
+	RESTRICT ForeignKeyAction = "RESTRICT"
+)
+
 type ForeignKey struct {
 	BasicConstraint
 	foreignTable   Table
 	foreignColumns []Column
+	OnUpdate       ForeignKeyAction
+	OnDelete       ForeignKeyAction
 }
 
 func NewForeignKey(table Table, name string, foreignTable Table, columns ...Column) *ForeignKey {
@@ -23,6 +32,8 @@ func (self *ForeignKey) Init(table Table, name string, foreignTable Table, colum
 		columns[i] = c.Clone(table, fmt.Sprintf("%v%v", name, c.Name()))
 	}
 
+	self.OnUpdate = CASCADE
+	self.OnDelete = RESTRICT
 	self.BasicConstraint.Init(table, name, columns...)
 	table.AddForeignKey(self)
 	return self
@@ -37,8 +48,9 @@ func (self ForeignKey) Create(tx *Tx) error {
 }
 
 func (self ForeignKey) CreateSQL() string {
-	return fmt.Sprintf("%v REFERENCES %v (%v)",
-		ConstraintCreateSQL(&self), self.foreignTable.SQLName(), ColumnsSQL(self.foreignColumns...))
+	return fmt.Sprintf("%v REFERENCES %v (%v) ON UPDATE %v ON DELETE %v",
+		ConstraintCreateSQL(&self), self.foreignTable.SQLName(), ColumnsSQL(self.foreignColumns...),
+		self.OnUpdate, self.OnDelete)
 }
 
 func (self ForeignKey) Drop(tx *Tx) error {
