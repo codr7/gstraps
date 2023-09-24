@@ -1,6 +1,8 @@
 package db
 
 import (
+	"log"
+
 	"github.com/jackc/pgx/v5"
 )
 
@@ -30,6 +32,9 @@ func (self *Tx) Commit() error {
 }
 
 func (self *Tx) ExecSQL(sql string, params ...any) error {
+	log.Print(sql)
+	log.Print(params)
+
 	_, err := self.imp.Exec(self.cx.cx, sql, params...)
 	return err
 }

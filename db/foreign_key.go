@@ -37,7 +37,8 @@ func (self ForeignKey) Create(tx *Tx) error {
 }
 
 func (self ForeignKey) CreateSQL() string {
-	return ConstraintCreateSQL(&self)
+	return fmt.Sprintf("%v REFERENCES %v (%v)",
+		ConstraintCreateSQL(&self), self.foreignTable.SQLName(), ColumnsSQL(self.foreignColumns...))
 }
 
 func (self ForeignKey) Drop(tx *Tx) error {

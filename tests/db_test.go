@@ -66,6 +66,7 @@ func TestDBRecord(t *testing.T) {
 func TestDBTable(t *testing.T) {
 	tbl1 := db.NewTable("TestTable1")
 	col1 := db.NewIntegerColumn(tbl1, "TestTableColumn1")
+	db.NewIndex(tbl1, "TestTableIndex", col1).Unique = true
 	key1 := db.NewKey(tbl1, "TestTablePrimaryKey1", col1)
 	tbl1.SetPrimaryKey(key1)
 
@@ -95,11 +96,11 @@ func TestDBTable(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err := tbl1.Drop(tx); err != nil {
+	if err := tbl2.Drop(tx); err != nil {
 		t.Fatal(err)
 	}
 
-	if err := tbl2.Drop(tx); err != nil {
+	if err := tbl1.Drop(tx); err != nil {
 		t.Fatal(err)
 	}
 

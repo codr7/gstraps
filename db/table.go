@@ -10,6 +10,7 @@ type Table interface {
 	AddColumn(Column)
 	AddDefinition(Definition)
 	AddForeignKey(*ForeignKey)
+	AddIndex(*Index)
 	PrimaryKey() *Key
 	SetPrimaryKey(*Key)
 }
@@ -19,6 +20,7 @@ type BasicTable struct {
 	columns     []Column
 	definitions []Definition
 	foreignKeys []*ForeignKey
+	indexes     []*Index
 	primaryKey  *Key
 }
 
@@ -45,19 +47,18 @@ func (self *BasicTable) AddForeignKey(key *ForeignKey) {
 	self.AddDefinition(key)
 }
 
+func (self *BasicTable) AddIndex(index *Index) {
+	self.indexes = append(self.indexes, index)
+	self.AddDefinition(index)
+}
+
 func (self BasicTable) Create(tx *Tx) error {
 	if err := tx.ExecSQL(self.CreateSQL()); err != nil {
 		return err
 	}
 
-	for _, c := range self.columns {
-		if err := c.Create(tx); err != nil {
-			return err
-		}
-	}
-
-	if self.primaryKey != nil {
-		if err := self.primaryKey.Create(tx); err != nil {
+	for _, d := range self.definitions {
+		if err := d.Create(tx); err != nil {
 			return err
 		}
 	}

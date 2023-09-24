@@ -1,7 +1,7 @@
 * db
-** add Create/Drop for Index
-*** add unique
-**** options?
+** finish create/drop index
+*** add unique option
+**** add to db tests
 ** add Table.Insert
 ** add Cond
 ** add Table.Update
