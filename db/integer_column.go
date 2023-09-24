@@ -18,7 +18,7 @@ func (_ IntegerColumn) ColumnType() string {
 	return "INTEGER"
 }
 
-func (self IntegerColumn) Create(tx *Transaction) error {
+func (self IntegerColumn) Create(tx *Tx) error {
 	return tx.ExecSQL(self.CreateSQL())
 }
 
@@ -26,7 +26,7 @@ func (self IntegerColumn) CreateSQL() string {
 	return ColumnCreateSQL(&self)
 }
 
-func (self IntegerColumn) Drop(tx *Transaction) error {
+func (self IntegerColumn) Drop(tx *Tx) error {
 	return tx.ExecSQL(self.DropSQL())
 }
 

@@ -5,8 +5,7 @@ import (
 )
 
 type Record struct {
-	connection *Connection
-	fields     utils.Set[Column, *Field]
+	fields utils.Set[Column, *Field]
 }
 
 type Field struct {
@@ -14,13 +13,11 @@ type Field struct {
 	value  any
 }
 
-func NewRecord(connection *Connection) *Record {
-	return new(Record).Init(connection)
+func NewRecord() *Record {
+	return new(Record).Init()
 }
 
-func (self *Record) Init(connection *Connection) *Record {
-	self.connection = connection
-
+func (self *Record) Init() *Record {
 	self.fields.Init(func(l Column, r *Field) int {
 		if c := utils.CompareString(l.Table().Name(), r.column.Table().Name()); c != 0 {
 			return c
@@ -48,9 +45,9 @@ func (self Record) Get(column Column) any {
 	return nil
 }
 
-func (self Record) Modified(column Column) bool {
+func (self Record) Modified(column Column, tx *Tx) bool {
 	if f := self.getField(column); f != nil {
-		if v, ok := self.connection.storedFields[f]; !ok || v != f.value {
+		if v, ok := tx.StoredValue(f); !ok || v != f.value {
 			return true
 		}
 	}
@@ -70,9 +67,9 @@ func (self *Record) Set(column Column, value any) {
 	}
 }
 
-func (self Record) Stored(column Column) bool {
+func (self Record) Stored(column Column, tx *Tx) bool {
 	if f := self.getField(column); f != nil {
-		if _, ok := self.connection.storedFields[f]; ok {
+		if _, ok := tx.StoredValue(f); ok {
 			return true
 		}
 	}

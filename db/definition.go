@@ -8,9 +8,9 @@ type Definition interface {
 	DefinitionType() string
 	Name() string
 	//Exists() (bool, error)
-	Create(tx *Transaction) error
+	Create(tx *Tx) error
 	CreateSQL() string
-	Drop(tx *Transaction) error
+	Drop(tx *Tx) error
 	DropSQL() string
 	SQLName() string
 }

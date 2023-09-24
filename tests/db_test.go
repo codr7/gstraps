@@ -10,23 +10,29 @@ func TestDBRecord(t *testing.T) {
 	tbl := db.NewTable("TestRecord")
 	col := db.NewIntegerColumn(tbl, "TestRecordColumn")
 
-	c, err := db.DefaultConnectOptions().NewConnection()
+	c, err := db.DefaultCxOptions().NewCx()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	rec := db.NewRecord(c)
+	tx, err := c.StartTx()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rec := db.NewRecord()
 
 	if ok := rec.Null(col); !ok {
 		t.Fatalf("Field should be null")
 	}
 
-	if ok := rec.Modified(col); ok {
+	if ok := rec.Modified(col, tx); ok {
 		t.Fatal("Field shouldn't be modified")
 	}
 
-	if ok := rec.Stored(col); ok {
+	if ok := rec.Stored(col, tx); ok {
 		t.Fatal("Field shouldn't be stored")
 	}
 
@@ -40,12 +46,16 @@ func TestDBRecord(t *testing.T) {
 		t.Fatal("Field shouldn't be null")
 	}
 
-	if ok := rec.Modified(col); !ok {
+	if ok := rec.Modified(col, tx); !ok {
 		t.Fatal("Field should be modified")
 	}
 
-	if ok := rec.Stored(col); ok {
+	if ok := rec.Stored(col, tx); ok {
 		t.Fatal("Field shouldn't be stored")
+	}
+
+	if err = tx.Rollback(); err != nil {
+		t.Fatal(err)
 	}
 
 	if err = c.Close(); err != nil {
@@ -59,13 +69,13 @@ func TestDBTable(t *testing.T) {
 	key := db.NewKey(tbl, "TestTablePrimaryKey", col)
 	tbl.SetPrimaryKey(key)
 
-	c, err := db.DefaultConnectOptions().NewConnection()
+	c, err := db.DefaultCxOptions().NewCx()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	tx, err := c.StartTransaction()
+	tx, err := c.StartTx()
 
 	if err != nil {
 		t.Fatal(err)
@@ -88,20 +98,20 @@ func TestDBTable(t *testing.T) {
 	}
 }
 
-func TestDBTransactions(t *testing.T) {
-	c, err := db.DefaultConnectOptions().NewConnection()
+func TestDBTxs(t *testing.T) {
+	c, err := db.DefaultCxOptions().NewCx()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	tx1, err := c.StartTransaction()
+	tx1, err := c.StartTx()
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	tx2, err := c.StartTransaction()
+	tx2, err := c.StartTx()
 
 	if err != nil {
 		t.Fatal(err)
@@ -116,7 +126,7 @@ func TestDBTransactions(t *testing.T) {
 	}
 
 	if err = tx1.Commit(); err == nil {
-		t.Fatal("Commit of rolled back transaction")
+		t.Fatal("Commit of rolled back tx")
 	}
 
 	if err = c.Close(); err != nil {

@@ -17,7 +17,7 @@ func (_ TextColumn) ColumnType() string {
 	return "TEXT"
 }
 
-func (self *TextColumn) Create(tx *Transaction) error {
+func (self *TextColumn) Create(tx *Tx) error {
 	return tx.ExecSQL(self.CreateSQL())
 }
 
@@ -25,7 +25,7 @@ func (self *TextColumn) CreateSQL() string {
 	return ColumnCreateSQL(self)
 }
 
-func (self *TextColumn) Drop(tx *Transaction) error {
+func (self *TextColumn) Drop(tx *Tx) error {
 	return tx.ExecSQL(self.DropSQL())
 }
 

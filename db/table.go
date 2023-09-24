@@ -31,7 +31,7 @@ func (self *BasicTable) AddColumn(column Column) {
 	self.columns = append(self.columns, column)
 }
 
-func (self BasicTable) Create(tx *Transaction) error {
+func (self BasicTable) Create(tx *Tx) error {
 	if err := tx.ExecSQL(self.CreateSQL()); err != nil {
 		return err
 	}
@@ -59,7 +59,7 @@ func (self BasicTable) DefinitionType() string {
 	return "TABLE"
 }
 
-func (self BasicTable) Drop(tx *Transaction) error {
+func (self BasicTable) Drop(tx *Tx) error {
 	return tx.ExecSQL(self.DropSQL())
 }
 

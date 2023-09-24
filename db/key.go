@@ -21,7 +21,7 @@ func (self *Key) ConstraintType() string {
 	return "UNIQUE"
 }
 
-func (self Key) Create(tx *Transaction) error {
+func (self Key) Create(tx *Tx) error {
 	return tx.ExecSQL(self.CreateSQL())
 }
 
@@ -29,7 +29,7 @@ func (self Key) CreateSQL() string {
 	return ConstraintCreateSQL(&self)
 }
 
-func (self Key) Drop(tx *Transaction) error {
+func (self Key) Drop(tx *Tx) error {
 	return tx.ExecSQL(self.DropSQL())
 }
 

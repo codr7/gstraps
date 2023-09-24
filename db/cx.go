@@ -8,19 +8,18 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-type Connection struct {
-	cx           context.Context
-	imp          *pgx.Conn
-	storedFields StoredFields
+type Cx struct {
+	StoredValues
+	cx  context.Context
+	imp *pgx.Conn
 }
 
-type StoredFields = map[*Field]any
-
-func Connect(cx context.Context, url string) (*Connection, error) {
-	return new(Connection).Init(cx, url)
+func NewCx(cx context.Context, url string) (*Cx, error) {
+	return new(Cx).Init(cx, url)
 }
 
-func (self *Connection) Init(cx context.Context, url string) (*Connection, error) {
+func (self *Cx) Init(cx context.Context, url string) (*Cx, error) {
+	self.StoredValues.Init()
 	var err error
 
 	if self.imp, err = pgx.Connect(cx, url); err != nil {
@@ -29,25 +28,38 @@ func (self *Connection) Init(cx context.Context, url string) (*Connection, error
 
 	pgxdecimal.Register(self.imp.TypeMap())
 	self.cx = cx
-	self.storedFields = make(StoredFields)
 	return self, nil
 }
 
-func (self *Connection) StartTransaction() (*Transaction, error) {
+func (self *Cx) StartTx() (*Tx, error) {
 	imp, err := self.imp.Begin(self.cx)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return new(Transaction).Init(self, imp), nil
+	return new(Tx).Init(self, imp), nil
 }
 
-func (self *Connection) Close() error {
+func (self *Cx) Close() error {
 	return self.imp.Close(self.cx)
 }
 
-type ConnectOptions struct {
+type StoredValues struct {
+	storedValues map[*Field]any
+}
+
+func (self *StoredValues) Init() *StoredValues {
+	self.storedValues = make(map[*Field]any)
+	return self
+}
+
+func (self StoredValues) StoredValue(field *Field) (any, bool) {
+	v, ok := self.storedValues[field]
+	return v, ok
+}
+
+type CxOptions struct {
 	Context  context.Context
 	Host     string
 	Port     int
@@ -57,14 +69,14 @@ type ConnectOptions struct {
 	SSLMode  bool
 }
 
-func (self ConnectOptions) NewConnection() (*Connection, error) {
-	return Connect(self.Context,
+func (self CxOptions) NewCx() (*Cx, error) {
+	return NewCx(self.Context,
 		fmt.Sprintf("host=%v port=%v dbname=%v user=%v password=%v sslmode=disable",
 			self.Host, self.Port, self.Database, self.User, self.Password))
 }
 
-func DefaultConnectOptions() ConnectOptions {
-	var o ConnectOptions
+func DefaultCxOptions() CxOptions {
+	var o CxOptions
 	o.Context = context.Background()
 	o.Host = "localhost"
 	o.Port = 5432
