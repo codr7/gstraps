@@ -18,7 +18,7 @@ func (self *BasicConstraint) Init(table Table, name string, columns ...Column) *
 	return self
 }
 
-func (self *BasicConstraint) DefinitionType() string {
+func (_ BasicConstraint) DefinitionType() string {
 	return "CONSTRAINT"
 }
 

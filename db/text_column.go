@@ -4,12 +4,12 @@ type TextColumn struct {
 	BasicColumn
 }
 
-func NewTextColumn(table Table, name string) *TextColumn {
-	return new(TextColumn).Init(table, name)
+func NewTextColumn(table Table, name string, options ...ColumnOption) *TextColumn {
+	return new(TextColumn).Init(table, name, options...)
 }
 
-func (self *TextColumn) Init(table Table, name string) *TextColumn {
-	self.BasicColumn.Init(table, name)
+func (self *TextColumn) Init(table Table, name string, options ...ColumnOption) *TextColumn {
+	self.BasicColumn.Init(table, name, options...)
 	table.AddColumn(self)
 	return self
 }

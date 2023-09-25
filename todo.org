@@ -1,5 +1,4 @@
 * db
-** add column Null option
 ** add Table.Insert
 ** add Cond
 ** add Table.Update

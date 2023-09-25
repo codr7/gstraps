@@ -4,12 +4,12 @@ type IntegerColumn struct {
 	BasicColumn
 }
 
-func NewIntegerColumn(table Table, name string) *IntegerColumn {
-	return new(IntegerColumn).Init(table, name)
+func NewIntegerColumn(table Table, name string, options ...ColumnOption) *IntegerColumn {
+	return new(IntegerColumn).Init(table, name, options...)
 }
 
-func (self *IntegerColumn) Init(table Table, name string) *IntegerColumn {
-	self.BasicColumn.Init(table, name)
+func (self *IntegerColumn) Init(table Table, name string, options ...ColumnOption) *IntegerColumn {
+	self.BasicColumn.Init(table, name, options...)
 	table.AddColumn(self)
 	return self
 }

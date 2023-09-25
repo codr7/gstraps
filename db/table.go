@@ -70,7 +70,7 @@ func (self BasicTable) CreateSQL() string {
 	return fmt.Sprintf("%v ()", DefinitionCreateSQL(&self))
 }
 
-func (self BasicTable) DefinitionType() string {
+func (_ BasicTable) DefinitionType() string {
 	return "TABLE"
 }
 

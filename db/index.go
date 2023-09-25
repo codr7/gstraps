@@ -7,15 +7,16 @@ import (
 
 type Index struct {
 	BasicColumnsDefinition
-	Unique bool
+	unique bool
 }
 
-func NewIndex(table Table, name string, columns ...Column) *Index {
-	return new(Index).Init(table, name, columns...)
+func NewIndex(table Table, name string, unique bool, columns ...Column) *Index {
+	return new(Index).Init(table, name, unique, columns...)
 }
 
-func (self *Index) Init(table Table, name string, columns ...Column) *Index {
+func (self *Index) Init(table Table, name string, unique bool, columns ...Column) *Index {
 	self.BasicColumnsDefinition.Init(table, name, columns...)
+	self.unique = unique
 	table.AddIndex(self)
 	return self
 }
@@ -32,7 +33,7 @@ func (self Index) CreateSQL() string {
 	var sql strings.Builder
 	sql.WriteString("CREATE")
 
-	if self.Unique {
+	if self.unique {
 		sql.WriteString(" UNIQUE")
 	}
 

@@ -5,22 +5,49 @@ import (
 	"strings"
 )
 
+type ColumnOption string
+
+const (
+	NotNull ColumnOption = "NOT NULL"
+)
+
 type Column interface {
 	TableDefinition
 	Clone(table Table, name string) Column
 	ColumnType() string
+	OptionSQL() string
 }
 
 type BasicColumn struct {
 	BasicTableDefinition
+	options []string
+}
+
+func (self *BasicColumn) Init(table Table, name string, options ...ColumnOption) *BasicColumn {
+	self.BasicTableDefinition.Init(table, name)
+	self.options = make([]string, len(options))
+
+	for i, o := range options {
+		self.options[i] = string(o)
+	}
+
+	return self
 }
 
 func (_ BasicColumn) DefinitionType() string {
 	return "COLUMN"
 }
 
+func (self BasicColumn) OptionSQL() string {
+	if self.options == nil {
+		return ""
+	}
+
+	return fmt.Sprintf(" %v", strings.Join(self.options, " "))
+}
+
 func ColumnCreateSQL(col Column) string {
-	return fmt.Sprintf("%v %v", TableDefinitionCreateSQL(col), col.ColumnType())
+	return fmt.Sprintf("%v %v%v", TableDefinitionCreateSQL(col), col.ColumnType(), col.OptionSQL())
 }
 
 func ColumnDropSQL(col Column) string {

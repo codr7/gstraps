@@ -65,9 +65,9 @@ func TestDBRecord(t *testing.T) {
 
 func TestDBTable(t *testing.T) {
 	tbl1 := db.NewTable("TestTable1")
-	tbl1_integer := db.NewIntegerColumn(tbl1, "TestTable1Integer")
-	db.NewTextColumn(tbl1, "TestTable1Text")
-	db.NewIndex(tbl1, "TestTableIndex", tbl1_integer).Unique = true
+	tbl1_integer := db.NewIntegerColumn(tbl1, "TestTable1Integer", db.NotNull)
+	db.NewTextColumn(tbl1, "TestTable1Text", db.NotNull)
+	db.NewIndex(tbl1, "TestTableIndex", true, tbl1_integer)
 	tbl1_primary := db.NewKey(tbl1, "TestTable1Primary", tbl1_integer)
 	tbl1.SetPrimaryKey(tbl1_primary)
 
