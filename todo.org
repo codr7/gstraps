@@ -1,7 +1,8 @@
 * db
-** add Table.Insert
-** add Cond
-** add Table.Update
+** finish Record.Store
+*** store values in tx on record store
+*** test stored values
+** implement Record.Store(Table)
 ** add Table.Delete
 ** add Exists for all definitions
 ** add Sequence

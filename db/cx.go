@@ -54,6 +54,10 @@ func (self *StoredValues) Init() *StoredValues {
 	return self
 }
 
+func (self *StoredValues) StoreValue(field *Field) {
+	self.storedValues[field] = field.value
+}
+
 func (self StoredValues) StoredValue(field *Field) (any, bool) {
 	v, ok := self.storedValues[field]
 	return v, ok

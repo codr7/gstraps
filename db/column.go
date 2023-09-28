@@ -15,6 +15,7 @@ type Column interface {
 	TableDefinition
 	Clone(table Table, name string) Column
 	ColumnType() string
+	Eq(any) Condition
 	OptionSQL() string
 }
 
@@ -36,6 +37,14 @@ func (self *BasicColumn) Init(table Table, name string, options ...ColumnOption)
 
 func (_ BasicColumn) DefinitionType() string {
 	return "COLUMN"
+}
+
+func (self BasicColumn) Eq(other any) Condition {
+	if c, ok := other.(Column); ok {
+		return NewCondition(fmt.Sprintf("%v = %v", self.SQLName(), c.SQLName()))
+	}
+
+	return NewCondition(fmt.Sprintf("%v = ?", self.SQLName()), other)
 }
 
 func (self BasicColumn) OptionSQL() string {

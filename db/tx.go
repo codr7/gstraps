@@ -32,6 +32,7 @@ func (self *Tx) Commit() error {
 }
 
 func (self *Tx) ExecSQL(sql string, params ...any) error {
+	sql = ConvertParams(sql)
 	log.Print(sql)
 	log.Print(params)
 

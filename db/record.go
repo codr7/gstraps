@@ -29,6 +29,10 @@ func (self *Record) Init() *Record {
 	return self
 }
 
+func (self Record) Fields() []*Field {
+	return self.fields.Items()
+}
+
 func (self Record) getField(column Column) *Field {
 	if f, ok := self.fields.Find(column); ok {
 		return f
@@ -67,6 +71,33 @@ func (self *Record) Set(column Column, value any) {
 	}
 }
 
+func (self Record) Store(table Table, tx *Tx) error {
+	stored := false
+
+	for _, c := range table.Columns() {
+		if self.Stored(c, tx) {
+			stored = true
+			break
+		}
+	}
+
+	for _, c := range table.Columns() {
+		tx.StoreValue(self.getField(c))
+	}
+
+	if stored {
+		var conds []Condition
+
+		for _, c := range table.PrimaryKey().Columns() {
+			conds = append(conds, c.Eq(self.StoredValue(c, tx)))
+		}
+
+		return table.Update(self, And(conds...), tx)
+	}
+
+	return table.Insert(self, tx)
+}
+
 func (self Record) Stored(column Column, tx *Tx) bool {
 	if f := self.getField(column); f != nil {
 		if _, ok := tx.StoredValue(f); ok {
@@ -75,4 +106,13 @@ func (self Record) Stored(column Column, tx *Tx) bool {
 	}
 
 	return false
+}
+
+func (self Record) StoredValue(column Column, tx *Tx) any {
+	if f := self.getField(column); f != nil {
+		v, _ := tx.StoredValue(f)
+		return v
+	}
+
+	return nil
 }

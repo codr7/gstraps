@@ -9,6 +9,8 @@ import (
 func TestDBRecord(t *testing.T) {
 	tbl := db.NewTable("TestRecord")
 	col := db.NewIntegerColumn(tbl, "TestRecordColumn")
+	pk := db.NewKey(tbl, "TestRecordPrimary", col)
+	tbl.SetPrimaryKey(pk)
 
 	c, err := db.DefaultCxOptions().NewCx()
 
@@ -19,6 +21,10 @@ func TestDBRecord(t *testing.T) {
 	tx, err := c.StartTx()
 
 	if err != nil {
+		t.Fatal(err)
+	}
+
+	if err := tbl.Create(tx); err != nil {
 		t.Fatal(err)
 	}
 
@@ -54,11 +60,27 @@ func TestDBRecord(t *testing.T) {
 		t.Fatal("Field shouldn't be stored")
 	}
 
-	if err = tx.Rollback(); err != nil {
+	if err := rec.Store(tbl, tx); err != nil {
 		t.Fatal(err)
 	}
 
-	if err = c.Close(); err != nil {
+	if ok := rec.Stored(col, tx); !ok {
+		t.Fatal("Field should be stored")
+	}
+
+	if err := rec.Store(tbl, tx); err != nil {
+		t.Fatal(err)
+	}
+
+	if ok := rec.Stored(col, tx); !ok {
+		t.Fatal("Field should be stored")
+	}
+
+	if err := tx.Rollback(); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := c.Close(); err != nil {
 		t.Fatal(err)
 	}
 }

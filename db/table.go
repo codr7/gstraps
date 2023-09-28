@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"log"
+	"strings"
 )
 
 type Table interface {
@@ -11,8 +12,11 @@ type Table interface {
 	AddDefinition(Definition)
 	AddForeignKey(*ForeignKey)
 	AddIndex(*Index)
+	Columns() []Column
+	Insert(Record, *Tx) error
 	PrimaryKey() *Key
 	SetPrimaryKey(*Key)
+	Update(Record, Condition, *Tx) error
 }
 
 type BasicTable struct {
@@ -50,6 +54,10 @@ func (self *BasicTable) AddForeignKey(key *ForeignKey) {
 func (self *BasicTable) AddIndex(index *Index) {
 	self.indexes = append(self.indexes, index)
 	self.AddDefinition(index)
+}
+
+func (self BasicTable) Columns() []Column {
+	return self.columns
 }
 
 func (self BasicTable) Create(tx *Tx) error {
@@ -92,4 +100,41 @@ func (self *BasicTable) SetPrimaryKey(key *Key) {
 	}
 
 	self.primaryKey = key
+}
+
+func (self BasicTable) Insert(rec Record, tx *Tx) error {
+	var columns []Column
+	var values []any
+	var params []string
+
+	for _, c := range self.columns {
+		if v := rec.Get(c); v != nil {
+			columns = append(columns, c)
+			values = append(values, v)
+			params = append(params, "?")
+		}
+	}
+
+	sql := fmt.Sprintf("INSERT INTO %v (%v) VALUES (%v)", self.SQLName(), ColumnsSQL(columns...), strings.Join(params, ", "))
+	return tx.ExecSQL(sql, values...)
+}
+
+func (self BasicTable) Update(rec Record, cond Condition, tx *Tx) error {
+	var sql strings.Builder
+	fmt.Fprintf(&sql, "UPDATE %v SET ", self.SQLName())
+	var values []any
+
+	for i, c := range self.columns {
+		if v := rec.Get(c); v != nil {
+			if i > 0 {
+				sql.WriteString(", ")
+			}
+
+			fmt.Fprintf(&sql, "%v = ?", c.SQLName())
+			values = append(values, v)
+		}
+	}
+
+	fmt.Fprintf(&sql, " WHERE %v", cond.sql)
+	return tx.ExecSQL(sql.String(), append(values, cond.params...)...)
 }
