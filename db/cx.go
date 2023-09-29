@@ -54,6 +54,10 @@ func (self *StoredValues) Init() *StoredValues {
 	return self
 }
 
+func (self *StoredValues) DeleteStoredValue(field *Field) {
+	delete(self.storedValues, field)
+}
+
 func (self *StoredValues) StoreValue(field *Field) {
 	self.storedValues[field] = field.value
 }

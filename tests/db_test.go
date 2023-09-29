@@ -31,15 +31,15 @@ func TestDBRecord(t *testing.T) {
 	rec := db.NewRecord()
 
 	if ok := rec.Null(col); !ok {
-		t.Fatalf("Field should be null")
+		t.Fatalf("Should be null")
 	}
 
 	if ok := rec.Modified(col, tx); ok {
-		t.Fatal("Field shouldn't be modified")
+		t.Fatal("Shouldn't be modified")
 	}
 
 	if ok := rec.Stored(col, tx); ok {
-		t.Fatal("Field shouldn't be stored")
+		t.Fatal("Shouldn't be stored")
 	}
 
 	col.Set(rec, 42)
@@ -49,15 +49,15 @@ func TestDBRecord(t *testing.T) {
 	}
 
 	if ok := rec.Null(col); ok {
-		t.Fatal("Field shouldn't be null")
+		t.Fatal("Shouldn't be null")
 	}
 
 	if ok := rec.Modified(col, tx); !ok {
-		t.Fatal("Field should be modified")
+		t.Fatal("Should be modified")
 	}
 
 	if ok := rec.Stored(col, tx); ok {
-		t.Fatal("Field shouldn't be stored")
+		t.Fatal("Shouldn't be stored")
 	}
 
 	if err := rec.Store(tbl, tx); err != nil {
@@ -65,7 +65,7 @@ func TestDBRecord(t *testing.T) {
 	}
 
 	if ok := rec.Stored(col, tx); !ok {
-		t.Fatal("Field should be stored")
+		t.Fatal("Should be stored")
 	}
 
 	if err := rec.Store(tbl, tx); err != nil {
@@ -73,7 +73,15 @@ func TestDBRecord(t *testing.T) {
 	}
 
 	if ok := rec.Stored(col, tx); !ok {
-		t.Fatal("Field should be stored")
+		t.Fatal("Should be stored")
+	}
+
+	if err := rec.Delete(tbl, tx); err != nil {
+		t.Fatal(err)
+	}
+
+	if ok := rec.Stored(col, tx); ok {
+		t.Fatal("Shouldn't not be stored")
 	}
 
 	if err := tx.Rollback(); err != nil {

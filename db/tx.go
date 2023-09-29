@@ -31,6 +31,11 @@ func (self *Tx) Commit() error {
 	return nil
 }
 
+func (self *Tx) DeleteStoredValue(field *Field) {
+	self.StoredValues.DeleteStoredValue(field)
+	self.cx.DeleteStoredValue(field)
+}
+
 func (self *Tx) ExecSQL(sql string, params ...any) error {
 	sql = ConvertParams(sql)
 	log.Print(sql)

@@ -6,6 +6,7 @@ import (
 
 type TableDefinition interface {
 	Definition
+	QualifiedName() string
 	Table() Table
 }
 
@@ -18,6 +19,10 @@ func (self *BasicTableDefinition) Init(table Table, name string) *BasicTableDefi
 	self.table = table
 	self.BasicDefinition.Init(name)
 	return self
+}
+
+func (self *BasicTableDefinition) QualifiedName() string {
+	return fmt.Sprintf("%v.%v", self.table.Name(), self.name)
 }
 
 func (self *BasicTableDefinition) Table() Table {

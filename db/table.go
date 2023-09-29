@@ -13,6 +13,7 @@ type Table interface {
 	AddForeignKey(*ForeignKey)
 	AddIndex(*Index)
 	Columns() []Column
+	Delete(Condition, *Tx) error
 	Insert(Record, *Tx) error
 	PrimaryKey() *Key
 	SetPrimaryKey(*Key)
@@ -80,6 +81,11 @@ func (self BasicTable) CreateSQL() string {
 
 func (_ BasicTable) DefinitionType() string {
 	return "TABLE"
+}
+
+func (self BasicTable) Delete(cond Condition, tx *Tx) error {
+	sql := fmt.Sprintf("DELETE FROM %v WHERE %v", self.SQLName(), cond.sql)
+	return tx.ExecSQL(sql, cond.params...)
 }
 
 func (self BasicTable) Drop(tx *Tx) error {
